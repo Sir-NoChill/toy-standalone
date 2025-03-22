@@ -1,18 +1,18 @@
 {
   "testDir": "testfiles",
   "testedExecutablePaths": {
-    "<team id>": "<path_to_placeholderc_exe>"
+    "<team id>": "<path_to_toyc_exe>"
   },
   "runtimes": {
-    "<team id>": "<path_to_libplaceholderrt.so>"
+    "<team id>": "<path_to_libtoyrt.so>"
   },
   "toolchains": {
-    "placeholder": [
+    "toy": [
       {
-        "stepName": "placeholderc",
+        "stepName": "toyc",
         "executablePath": "$EXE",
         "arguments": ["$INPUT","$OUTPUT"],
-        "output": "placeholderc.ll",
+        "output": "toyc.ll",
         "allowError": true
       },
       {

@@ -1,5 +1,5 @@
-#ifndef PlaceholderBASE_RUNTIME_INCLUDE_RUN_TIME_ERRORS_H_
-#define PlaceholderBASE_RUNTIME_INCLUDE_RUN_TIME_ERRORS_H_
+#ifndef ToyBASE_RUNTIME_INCLUDE_RUN_TIME_ERRORS_H_
+#define ToyBASE_RUNTIME_INCLUDE_RUN_TIME_ERRORS_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,4 +18,4 @@ DEF_RUN_TIME_ERROR(SizeError)
 
 DEF_RUN_TIME_ERROR(StrideError)
 
-#endif // PlaceholderBASE_RUNTIME_INCLUDE_RUN_TIME_ERRORS_H_
+#endif // ToyBASE_RUNTIME_INCLUDE_RUN_TIME_ERRORS_H_

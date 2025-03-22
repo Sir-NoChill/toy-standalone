@@ -1,31 +1,31 @@
 {
   "testDir": "testfiles",
   "testedExecutablePaths": {
-    "<team-name>": "../bin/placeholderc"
+    "<team-name>": "../bin/toyc"
   },
   "runtimes": {
-    "<team-name>": "../bin/libplaceholderrt.so"
+    "<team-name>": "../bin/libtoyrt.so"
   }, 
   "toolchains": {
-    "placeholder-llc": [
+    "toy-llc": [
       {
-        "stepName": "placeholder",
+        "stepName": "toy",
         "executablePath": "$EXE",
         "arguments": ["$INPUT", "$OUTPUT"],
-        "output": "placeholder.ll",
+        "output": "toy.ll",
         "allowError": true 
       }, 
       {
         "stepName": "llc",
         "executablePath": "/opt/llvm/bin/llc",
         "arguments": ["-filetype=obj", "$INPUT", "-o", "$OUTPUT"],
-        "output": "placeholder.o"
+        "output": "toy.o"
       },
       {
         "stepName": "clang",
         "executablePath": "/usr/bin/clang",
         "arguments": ["$INPUT", "-o", "$OUTPUT", "-L$RT_PATH", "-l$RT_LIB"],
-        "output": "placeholder"
+        "output": "toy"
       },
       {
         "stepName": "run",

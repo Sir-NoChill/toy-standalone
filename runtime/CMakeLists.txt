@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(PlaceholderRuntime)
+project(ToyRuntime)
 
 # Set a variable for the runtime include directory.
 set(RUNTIME_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")

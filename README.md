@@ -1,5 +1,5 @@
-# PlaceholderBase
-The base cmake setup for Placeholder assignment.
+# ToyBase
+The base cmake setup for Toy assignment.
 
 Author: Braedy Kuzma (braedy@ualberta.ca)  
 
@@ -34,7 +34,7 @@ everyone.
        encounter an issue, let a TA know and we can fix it.
   1. Make a directory that you intend to build the project in and change into
      that directory.
-  1. Run `cmake <path-to-Placeholder-Base>`.
+  1. Run `cmake <path-to-Toy-Base>`.
   1. Run `make`.
   1. Done.
 

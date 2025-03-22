@@ -10,8 +10,8 @@ on:
 
 jobs:
   build:
-    runs-on: placeholder
-    container: technomancernc/cmput-415:placeholder24
+    runs-on: toy
+    container: technomancernc/cmput-415:toy24
 
     steps:
     # Step 1: Checkout the repository
@@ -27,7 +27,7 @@ jobs:
           make
 
     # Step 3: Run tests
-      - name: Run command using placeholder binary
+      - name: Run command using toy binary
         working-directory: tests
         run: |
           dragon-runner CIConfig.json
