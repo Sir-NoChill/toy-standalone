@@ -1,0 +1,40 @@
+{
+  "testDir": "testfiles",
+  "testedExecutablePaths": {
+    "<team-name>": "../bin/placeholderc"
+  },
+  "runtimes": {
+    "<team-name>": "../bin/libplaceholderrt.so"
+  }, 
+  "toolchains": {
+    "placeholder-llc": [
+      {
+        "stepName": "placeholder",
+        "executablePath": "$EXE",
+        "arguments": ["$INPUT", "$OUTPUT"],
+        "output": "placeholder.ll",
+        "allowError": true 
+      }, 
+      {
+        "stepName": "llc",
+        "executablePath": "/opt/llvm/bin/llc",
+        "arguments": ["-filetype=obj", "$INPUT", "-o", "$OUTPUT"],
+        "output": "placeholder.o"
+      },
+      {
+        "stepName": "clang",
+        "executablePath": "/usr/bin/clang",
+        "arguments": ["$INPUT", "-o", "$OUTPUT", "-L$RT_PATH", "-l$RT_LIB"],
+        "output": "placeholder"
+      },
+      {
+        "stepName": "run",
+        "executablePath": "$INPUT",
+        "arguments": [],
+        "usesInStr": true,
+        "usesRuntime": true,
+        "allowError": true
+      }
+    ] 
+  }
+}

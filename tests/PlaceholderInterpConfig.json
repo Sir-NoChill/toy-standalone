@@ -1,0 +1,28 @@
+{
+  "testDir": "testfiles",
+  "testedExecutablePaths": {
+    "<team id>": "<path_to_placeholderc_exe>"
+  },
+  "runtimes": {
+    "<team id>": "<path_to_libplaceholderrt.so>"
+  },
+  "toolchains": {
+    "placeholder": [
+      {
+        "stepName": "placeholderc",
+        "executablePath": "$EXE",
+        "arguments": ["$INPUT","$OUTPUT"],
+        "output": "placeholderc.ll",
+        "allowError": true
+      },
+      {
+        "stepName": "lli",
+        "executablePath": "<path-to-lli>",
+        "arguments": ["$INPUT"],
+        "usesRuntime": true,
+        "usesInStr": true,
+        "allowError": true
+      }
+    ]
+  }
+}
