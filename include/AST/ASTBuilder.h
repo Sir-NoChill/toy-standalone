@@ -4,9 +4,11 @@
 #include <AST/AST.h>
 #include <csignal>
 #include <cstddef>
+#include <optional>
 #include "ToyBaseVisitor.h"
 #include "ToyParser.h"
 #include "Symbol/SymbolTable.h"
+
 
 using namespace toy;
 
@@ -20,28 +22,41 @@ class ASTBuilder : public ToyBaseVisitor {
     ast::Block* ast;
     ast::SymbolTable* symtab;
 
-  public:
-    ASTBuilder() : ast_stack(std::vector<ast::ASTNode*>()), ast(nullptr), symtab(nullptr) {}
-    
+  protected:
+    ast::Variable* define_variable(ast::QualifierType qualifier,
+                                   ast::GazType type,
+                                   std::string name,
+                                   Token* token);
+    void define_subroutine(ast::SubRoutine* subroutine,
+                           std::string name,
+                           Token* token);
+    ast::Variable* resolve_variable(std::string name, Token* token);
+    std::optional<ast::SubRoutine*> resolve_subroutine(std::string name);
+    std::optional<Symbol*> resolve(std::string name);
+    std::optional<Symbol*> resolve_local(std::string name);
 
-    bool has_ast() { return false; };
-    ast::Block* get_ast() { return nullptr; };
-    std::any visitFile(ToyParser::FileContext *ctx) override { return nullptr; }
-    std::any visitStat(ToyParser::StatContext *ctx) override { return nullptr; }
-    std::any visitFuncStat(ToyParser::FuncStatContext *ctx) override { return nullptr; }
-    std::any visitBlockStat(ToyParser::BlockStatContext *ctx) override { return nullptr; }
-    std::any visitDeclStat(ToyParser::DeclStatContext *ctx) override { return nullptr; }
-    std::any visitShape(ToyParser::ShapeContext *ctx) override { return nullptr; }
-    std::any visitMulDivMod(ToyParser::MulDivModContext *ctx) override { return nullptr; }
-    std::any visitFunc(ToyParser::FuncContext *ctx) override { return nullptr; }
-    std::any visitBracket(ToyParser::BracketContext *ctx) override { return nullptr; }
-    std::any visitVariable(ToyParser::VariableContext *ctx) override { return nullptr; }
-    std::any visitAddSub(ToyParser::AddSubContext *ctx) override { return nullptr; }
-    std::any visitLiteralSlice(ToyParser::LiteralSliceContext *ctx) override { return nullptr; }
-    std::any visitLiteral(ToyParser::LiteralContext *ctx) override { return nullptr; }
-    std::any visitFuncExpr(ToyParser::FuncExprContext *ctx) override { return nullptr; }
-    std::any visitSlice(ToyParser::SliceContext *ctx) override { return nullptr; }
-    std::any visitParams(ToyParser::ParamsContext *ctx) override { return nullptr; }
+
+  public:
+    ASTBuilder();
+    
+    bool has_ast() { return ast ? true : false; };
+    ast::Block* get_ast() { return ast; };
+    std::any visitFile(ToyParser::FileContext *ctx) override;
+    std::any visitStat(ToyParser::StatContext *ctx) override;
+    std::any visitFuncStat(ToyParser::FuncStatContext *ctx) override;
+    std::any visitBlockStat(ToyParser::BlockStatContext *ctx) override;
+    std::any visitDeclStat(ToyParser::DeclStatContext *ctx) override;
+    std::any visitShape(ToyParser::ShapeContext *ctx) override;
+    std::any visitMulDivMod(ToyParser::MulDivModContext *ctx) override;
+    std::any visitFunc(ToyParser::FuncContext *ctx) override;
+    std::any visitBracket(ToyParser::BracketContext *ctx) override;
+    std::any visitVariable(ToyParser::VariableContext *ctx) override;
+    std::any visitAddSub(ToyParser::AddSubContext *ctx) override;
+    std::any visitLiteralSlice(ToyParser::LiteralSliceContext *ctx) override;
+    std::any visitLiteral(ToyParser::LiteralContext *ctx) override;
+    std::any visitFuncExpr(ToyParser::FuncExprContext *ctx) override;
+    std::any visitSlice(ToyParser::SliceContext *ctx) override;
+    std::any visitParams(ToyParser::ParamsContext *ctx) override;
 };
 
 #endif

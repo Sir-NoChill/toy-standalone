@@ -1,14 +1,23 @@
 # Gather our source files in this directory.
 set(BACKEND "${CMAKE_CURRENT_SOURCE_DIR}/Backend")
+set(AST "${CMAKE_CURRENT_SOURCE_DIR}/AST")
+set(AST_PASSES "${CMAKE_CURRENT_SOURCE_DIR}/ASTPasses")
+set(TOY "${CMAKE_CURRENT_SOURCE_DIR}/Toy")
 set(
   TOY_BACKEND_FILES
     "${BACKEND}/BackEnd.cpp"
 )
 
 set(
+  TOY_AST_FILES
+  "${AST}/ASTBuilder.cpp"
+)
+
+set(
   toy_src_files
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
     "${TOY_BACKEND_FILES}"
+    "${TOY_AST_FILES}"
 )
 
 
