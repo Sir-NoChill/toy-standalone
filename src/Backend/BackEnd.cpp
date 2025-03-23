@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "backend/BackEnd.h"
+#include "Backend/BackEnd.h"
 
 BackEnd::BackEnd(ast::Block* ast) : loc(mlir::UnknownLoc::get(&context)) {
     // Load Dialects.

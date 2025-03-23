@@ -7,9 +7,9 @@
 #include "tree/ParseTree.h"
 #include "tree/ParseTreeWalker.h"
 
-#include "backend/BackEnd.h"
-#include "ast/astBuilder.h"
-#include "ast_passes/pass.h"
+#include "Backend/BackEnd.h"
+#include "AST/ASTBuilder.h"
+#include "ASTPasses/Pass.h"
 
 #include <iostream>
 #include <fstream>

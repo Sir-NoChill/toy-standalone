@@ -1,7 +1,7 @@
 #ifndef __TOY_PASS_
 #define __TOY_PASS_
 
-#include "ast/ast.h"
+#include "AST/AST.h"
 
 namespace pass {
 

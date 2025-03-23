@@ -4,10 +4,7 @@ file: stat* EOF;
 
 stat
     : funcStat
-    ;
-
-scopeStat
-    : blockStat
+    | blockStat
     | declStat END
     | RETURN expr? END
     ;
@@ -17,7 +14,7 @@ funcStat
     ;
 
 blockStat
-    : LEFT_CURLY scopeStat* RIGHT_CURLY
+    : LEFT_CURLY stat* RIGHT_CURLY
     ;
 
 declStat
@@ -31,7 +28,7 @@ shape
 expr
     : LEFT_BRACKET expr RIGHT_BRACKET                   #bracket
     // | DOT_NOTATION                                      #dot
-    | <assoc='right'> expr POWER expr                   #power
+    // | <assoc='right'> expr POWER expr                   #power
     | expr (op=MUL | op=DIV | op=DSTAR) expr            #mulDivMod
     | expr (op=ADD | op=SUB) expr                       #addSub
     | funcExpr                                          #func
@@ -42,13 +39,13 @@ expr
     ;
 
 funcExpr
-    : ID LEFT_BRACKET RIGHT_BRACKET
-    | ID LEFT_BRACKET expr ( COMMA expr )* RIGHT_BRACKET
+    : ID LEFT_BRACKET (expr ( COMMA expr )*)? RIGHT_BRACKET
     ;
 
 slice
     : LEFT_SQUARE (expr (COMMA expr)*)? RIGHT_SQUARE
     ;
+
 params : ID (COMMA ID)*;
 
 

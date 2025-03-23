@@ -37,7 +37,7 @@
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 
 // AST
-#include "ast/ast.h"
+#include "AST/AST.h"
 
 class BackEnd {
  public:

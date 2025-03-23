@@ -1,5 +1,5 @@
 # Gather our source files in this directory.
-set(BACKEND "${CMAKE_CURRENT_SOURCE_DIR}/backend")
+set(BACKEND "${CMAKE_CURRENT_SOURCE_DIR}/Backend")
 set(
   TOY_BACKEND_FILES
     "${BACKEND}/BackEnd.cpp"
