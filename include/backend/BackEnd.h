@@ -1,3 +1,6 @@
+#ifndef __TOY_BACKEND_
+#define __TOY_BACKEND_
+
 // Pass manager
 #include "mlir/Pass/Pass.h"
 #include "mlir/Pass/PassManager.h"
@@ -33,18 +36,23 @@
 #include "mlir/Dialect/ControlFlow/IR/ControlFlow.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 
+// AST
+#include "ast/ast.h"
+
 class BackEnd {
  public:
-    BackEnd();
+    BackEnd(ast::Block*);
 
-    int emitModule();
-    int lowerDialects();
+    void codegen() { };
     void dumpLLVM(std::ostream &os);
  
  protected:
     void setupPrintf();
     void createGlobalString(const char *str, const char *stringName);
-      
+ 
+    int emitModule();
+    int lowerDialects();
+     
  private:
     // MLIR
     mlir::MLIRContext context;
@@ -56,3 +64,5 @@ class BackEnd {
     llvm::LLVMContext llvm_context;
     std::unique_ptr<llvm::Module> llvm_module;
 };
+
+#endif

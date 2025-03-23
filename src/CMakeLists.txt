@@ -1,9 +1,17 @@
 # Gather our source files in this directory.
+set(BACKEND "${CMAKE_CURRENT_SOURCE_DIR}/backend")
+set(
+  TOY_BACKEND_FILES
+    "${BACKEND}/BackEnd.cpp"
+)
+
 set(
   toy_src_files
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/BackEnd.cpp"
+    "${TOY_BACKEND_FILES}"
 )
+
+
 
 # Build our executable from the source files.
 add_executable(toyc ${toy_src_files})

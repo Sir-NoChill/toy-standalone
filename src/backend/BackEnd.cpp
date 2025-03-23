@@ -1,7 +1,7 @@
 #include <assert.h>
-#include "BackEnd.h"
+#include "backend/BackEnd.h"
 
-BackEnd::BackEnd() : loc(mlir::UnknownLoc::get(&context)) {
+BackEnd::BackEnd(ast::Block* ast) : loc(mlir::UnknownLoc::get(&context)) {
     // Load Dialects.
     context.loadDialect<mlir::LLVM::LLVMDialect>();
     context.loadDialect<mlir::func::FuncDialect>();
@@ -9,6 +9,7 @@ BackEnd::BackEnd() : loc(mlir::UnknownLoc::get(&context)) {
     context.loadDialect<mlir::scf::SCFDialect>();
     context.loadDialect<mlir::cf::ControlFlowDialect>();
     context.loadDialect<mlir::memref::MemRefDialect>(); 
+    // context.loadDialect<mlir::toy::ToyDialect>();
 
     // Initialize the MLIR context 
     builder = std::make_shared<mlir::OpBuilder>(&context);
@@ -27,7 +28,7 @@ int BackEnd::emitModule() {
     mlir::Type intType = mlir::IntegerType::get(&context, 32);
     auto mainType = mlir::LLVM::LLVMFunctionType::get(intType, {}, false);
     mlir::LLVM::LLVMFuncOp mainFunc = builder->create<mlir::LLVM::LLVMFuncOp>(loc, "main", mainType);
-    mlir::Block *entry = mainFunc.addEntryBlock();
+    mlir::Block *entry = mainFunc.addEntryBlock(*builder);
     builder->setInsertionPointToStart(entry);
 
     // Get the integer format string we already created.   
@@ -90,13 +91,13 @@ int BackEnd::lowerDialects() {
 void BackEnd::dumpLLVM(std::ostream &os) {  
     // The only remaining dialects in our module after the passes are builtin
     // and LLVM. Setup translation patterns to get them to LLVM IR.
-    mlir::registerBuiltinDialectTranslation(context);
-    mlir::registerLLVMDialectTranslation(context);
-    llvm_module = mlir::translateModuleToLLVMIR(module, llvm_context);
-
-    // Create llvm ostream and dump into the output file
-    llvm::raw_os_ostream output(os);
-    output << *llvm_module;
+    // mlir::registerBuiltinDialectTranslation(context);
+    // mlir::registerLLVMDialectTranslation(context);
+    // llvm_module = mlir::translateModuleToLLVMIR(module, llvm_context);
+    //
+    // // Create llvm ostream and dump into the output file
+    // llvm::raw_os_ostream output(os);
+    // output << *llvm_module;
 }
 
 void BackEnd::setupPrintf() {

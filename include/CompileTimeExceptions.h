@@ -1,6 +1,10 @@
 #ifndef ToyBASE_INCLUDE_COMPILETIMEEXCEPTIONS_H_
 #define ToyBASE_INCLUDE_COMPILETIMEEXCEPTIONS_H_
 
+#include <string>
+#include <ostream>
+#include <sstream>
+
 class CompileTimeException : public std::exception {
 protected:
     std::string msg;

@@ -25,7 +25,8 @@ declStat
     ;
 
 shape
-    : LANGLE INT (COMMA INT)*? RANGLE;
+    : LANGLE INT (COMMA INT)*? RANGLE
+    ;
 
 expr
     : LEFT_BRACKET expr RIGHT_BRACKET                   #bracket

@@ -1,3 +1,4 @@
+#include "CompileTimeExceptions.h"
 #include "ToyLexer.h"
 #include "ToyParser.h"
 
@@ -6,7 +7,9 @@
 #include "tree/ParseTree.h"
 #include "tree/ParseTreeWalker.h"
 
-#include "BackEnd.h"
+#include "backend/BackEnd.h"
+#include "ast/astBuilder.h"
+#include "ast_passes/pass.h"
 
 #include <iostream>
 #include <fstream>
@@ -17,6 +20,7 @@ int main(int argc, char **argv) {
               << "Required arguments: <input file path> <output file path>\n";
     return 1;
   }
+  std::ofstream outfile(argv[2]);
 
   // Open the file then parse and lex it.
   antlr4::ANTLRFileStream afs;
@@ -26,19 +30,34 @@ int main(int argc, char **argv) {
   toy::ToyParser parser(&tokens);
 
   // Get the root of the parse tree. Use your base rule name.
-  antlr4::tree::ParseTree *tree = parser.file();
+  ASTBuilder ast_builder;
+  try {
+    // Generate our parse tree
+    antlr4::tree::ParseTree *tree = parser.file();
+    ast_builder.visit(tree);
+    assert(ast_builder.has_ast());
+
+    // Turn it into an ast
+    pass::run_all_passes(ast_builder.get_ast());
+
+    // Optionally generate the ast dump
+    std::ofstream debugfile("/dev/stderr");
+    ast_builder.get_ast()->dump_xml(debugfile, 0);
+
+    // Generate the code
+    BackEnd backend = BackEnd(ast_builder.get_ast());
+    backend.codegen();
+    backend.dumpLLVM(outfile);
+  } catch (CompileTimeException const& e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
 
   // HOW TO USE A VISITOR
   // Make the visitor
   // MyVisitor visitor;
   // Visit the tree
   // visitor.visit(tree);
-
-  std::ofstream os(argv[2]);
-  BackEnd backend;
-  backend.emitModule();
-  backend.lowerDialects();
-  backend.dumpLLVM(os);
 
   return 0;
 }
