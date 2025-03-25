@@ -22,7 +22,11 @@ declStat
     ;
 
 shape
-    : LANGLE INT (COMMA INT)*? RANGLE
+    : LANGLE INT (COMMA INT)+? RANGLE
+    ;
+
+builtin
+    : (PRINT | TRANSPOSE) LEFT_BRACKET ID RIGHT_BRACKET
     ;
 
 expr
@@ -31,9 +35,8 @@ expr
     // | <assoc='right'> expr POWER expr                   #power
     | expr (op=MUL | op=DIV | op=DSTAR) expr            #mulDivMod
     | expr (op=ADD | op=SUB) expr                       #addSub
+    | builtin                                           #builtinFunc
     | funcExpr                                          #func
-    | INT 						#literal
-    | FLOAT						#literal
     | ID                                                #variable
     | slice                                             #literalSlice
     ;
@@ -43,13 +46,16 @@ funcExpr
     ;
 
 slice
-    : LEFT_SQUARE (expr (COMMA expr)*)? RIGHT_SQUARE
+    : LEFT_SQUARE ((FLOAT | INT) (COMMA (FLOAT | INT))*) RIGHT_SQUARE #literal
+    | LEFT_SQUARE (slice (COMMA slice)*)? RIGHT_SQUARE #nested
     ;
 
 params : ID (COMMA ID)*;
 
 
 RETURN : 'return';
+PRINT : 'print';
+TRANSPOSE : 'transpose';
 END : ';';
 LEFT_BRACKET: '(';
 RIGHT_BRACKET: ')';
