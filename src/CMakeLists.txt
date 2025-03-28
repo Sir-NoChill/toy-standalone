@@ -11,6 +11,7 @@ set(
 set(
   TOY_AST_FILES
   "${AST}/ASTBuilder.cpp"
+  "${AST}/ASTVisitor.cpp"
   "${AST}/AST.cpp"
 )
 

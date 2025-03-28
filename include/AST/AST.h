@@ -30,9 +30,11 @@ class ASTNode {
 
     virtual void dump(std::ofstream& outfile, int level) = 0;
 
-
     std::size_t loc();
     ~ASTNode(){};
+
+  public:
+    uint16_t getLine() { return line; }
 };
 
 class Shape : public ASTNode {
@@ -68,11 +70,12 @@ class Param : public ASTNode {
 
 class Return : public ASTNode {
   private:
-    std::optional<expr_t> expression;
+    std::optional<expr_t> expr;
   public:
     Return(uint16_t line, std::optional<expr_t> exp)
-      : ASTNode(line), expression(exp) {}
+      : ASTNode(line), expr(exp) {}
     void dump(std::ofstream& outfile, int level) override;
+    std::optional<expr_t> getExpr() { return expr; };
 };
 
 class Decl : public ASTNode {
@@ -84,15 +87,7 @@ class Decl : public ASTNode {
     Decl(uint16_t line, Param* var, std::optional<expr_t> expr)
       : ASTNode(line), var(var), expr(expr) {}
     void dump(std::ofstream& outfile, int level) override;
-};
-
-class Print : public ASTNode {
-  private:
-    std::optional<expr_t> expression;
-  public:
-    Print(uint16_t line, std::optional<expr_t> expr) 
-      : ASTNode(line), expression(expr) {}
-    void dump(std::ofstream& outfile, int level) override;
+    std::optional<expr_t> getExpr() { return expr; };
 };
 
 class Block : public ASTNode {
@@ -102,6 +97,7 @@ class Block : public ASTNode {
     Block(uint16_t line, std::vector<stat_t> statements)
       : ASTNode(line), statements(statements) {}
     void dump(std::ofstream& outfile, int level) override;
+    std::vector<stat_t> getStatements() { return statements; }
 };
 
 class Function : public ASTNode {
@@ -117,6 +113,9 @@ class Function : public ASTNode {
 	std::vector<Param*> parm
     ) : ASTNode(line), prototype(proto), body(b), parameters(parm) {}
     void dump(std::ofstream& outfile, int level) override;
+
+    std::vector<Param*> getParam() { return parameters; }
+    std::optional<Block*> getBlock() { return body; }
 };
 
 class Module : public ASTNode {
@@ -125,6 +124,7 @@ class Module : public ASTNode {
   public:
     Module(std::vector<Function*> functions);
     void dump(std::ofstream& outfile, int level) override;
+    std::vector<Function*> getFunctions() { return functions; ;}
 };
 
 class Expr : public ASTNode {
@@ -154,11 +154,20 @@ class VarExpr : public Expr {
 class CallExpr : public Expr {
   private:
     std::string func;
+  protected:
     std::vector<expr_t> operands;
   public:
     CallExpr(uint16_t line, std::string name, std::vector<expr_t> operands)
       : Expr(line, std::nullopt), func(name), operands(operands) {}
 
+    void dump(std::ofstream& outfile, int level) override;
+    std::vector<expr_t> getOperands() { return operands; }
+};
+
+class Print : public CallExpr {
+  public:
+    Print(uint16_t line, std::optional<expr_t> expr) 
+      : CallExpr(line, "print", std::vector<expr_t>()) {if (expr.has_value()) operands.emplace_back(expr.value());}
     void dump(std::ofstream& outfile, int level) override;
 };
 
@@ -185,6 +194,9 @@ class BinExpr : public Expr {
 	expr_t rhs
     ) : Expr(line, shape), op(op), lhs(lhs), rhs(rhs) {}
     void dump(std::ofstream& outfile, int level) override;
+
+    expr_t getLHS() { return lhs; }
+    expr_t getRHS() { return rhs; }
 };
 
 class LiteralExpr;
@@ -203,6 +215,8 @@ class LiteralExpr : public Expr {
     std::optional<Shape*> getShape() { return this->shape; }
     std::string repr();
     size_t size();
+
+    tensor_t getValues() { return values; }
 };
 
 } // namespace ast

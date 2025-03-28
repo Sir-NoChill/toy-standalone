@@ -132,8 +132,8 @@ void Decl::dump(std::ofstream& outfile, int level) {
 
 void Return::dump(std::ofstream& outfile, int level) {
   std::print(outfile, "{}Return @line {}: \n", std::string(level, ' '), this->line);
-  if (this->expression.has_value())
-    std::visit([&](auto& arg){arg->dump(outfile, level + 1);}, this->expression.value());
+  if (this->expr.has_value())
+    std::visit([&](auto& arg){arg->dump(outfile, level + 1);}, this->expr.value());
 }
 
 void BinExpr::dump(std::ofstream& outfile, int level) {
@@ -151,7 +151,8 @@ std::string opToString(Operation op) {
     case Mul: return "*";
     case Div: return "/";
     case MatMul: return "**";
-    }
+  }
+  throw LiteralError(0, "Invalid operation found");
 }
 
 uint16_t Shape::num_values() {
