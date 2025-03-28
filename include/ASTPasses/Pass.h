@@ -5,7 +5,7 @@
 
 namespace pass {
 
-void run_all_passes(ast::Block*) { };
+void run_all_passes(ast::Module*) { };
 
 }
 

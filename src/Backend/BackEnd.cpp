@@ -1,7 +1,7 @@
 #include <assert.h>
 #include "Backend/BackEnd.h"
 
-BackEnd::BackEnd(ast::Block* ast) : loc(mlir::UnknownLoc::get(&context)) {
+BackEnd::BackEnd(ast::Module* ast) : loc(mlir::UnknownLoc::get(&context)) {
     // Load Dialects.
     context.loadDialect<mlir::LLVM::LLVMDialect>();
     context.loadDialect<mlir::func::FuncDialect>();

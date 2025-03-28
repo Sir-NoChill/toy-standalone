@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
     pass::run_all_passes(ast_builder.get_ast());
 
     // Optionally generate the ast dump
-    std::ofstream debugfile("/dev/stderr");
-    ast_builder.get_ast()->dump_xml(debugfile, 0);
+    std::ofstream debugfile("./tmp.ast");
+    ast_builder.get_ast()->dump(debugfile, 0);
 
     // Generate the code
     BackEnd backend = BackEnd(ast_builder.get_ast());

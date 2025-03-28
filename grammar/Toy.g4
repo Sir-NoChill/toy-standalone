@@ -6,7 +6,8 @@ stat
     : funcStat
     | blockStat
     | declStat END
-    | RETURN expr? END
+    | printStat END
+    | returnStat END
     ;
 
 funcStat
@@ -21,22 +22,25 @@ declStat
     : VAR ID shape? ASSN expr
     ;
 
-shape
-    : LANGLE INT (COMMA INT)+? RANGLE
+printStat
+    : PRINT LEFT_BRACKET expr? RIGHT_BRACKET
     ;
 
-builtin
-    : (PRINT | TRANSPOSE) LEFT_BRACKET ID RIGHT_BRACKET
+returnStat
+    : RETURN expr?
+    ;
+
+shape
+    : LANGLE INT (COMMA INT)+? RANGLE
     ;
 
 expr
     : LEFT_BRACKET expr RIGHT_BRACKET                   #bracket
     // | DOT_NOTATION                                      #dot
     // | <assoc='right'> expr POWER expr                   #power
-    | expr (op=MUL | op=DIV | op=DSTAR) expr            #mulDivMod
+    | expr (op=MUL | op=DIV | op=DSTAR) expr            #mulDivMatmul
     | expr (op=ADD | op=SUB) expr                       #addSub
-    | builtin                                           #builtinFunc
-    | funcExpr                                          #func
+    | funcExpr                                          #call
     | ID                                                #variable
     | slice                                             #literalSlice
     ;
@@ -46,16 +50,19 @@ funcExpr
     ;
 
 slice
-    : LEFT_SQUARE ((FLOAT | INT) (COMMA (FLOAT | INT))*) RIGHT_SQUARE #literal
+    : LEFT_SQUARE sliceValue (COMMA sliceValue)* RIGHT_SQUARE #literal
     | LEFT_SQUARE (slice (COMMA slice)*)? RIGHT_SQUARE #nested
+    ;
+
+sliceValue
+    : INT
+    | FLOAT
     ;
 
 params : ID (COMMA ID)*;
 
-
 RETURN : 'return';
 PRINT : 'print';
-TRANSPOSE : 'transpose';
 END : ';';
 LEFT_BRACKET: '(';
 RIGHT_BRACKET: ')';
@@ -94,8 +101,6 @@ FLOAT
     ;
 INT: DIGIT+;
 ID: ID_FRAGMENT;
-
-NUMBER : INT | FLOAT ;
 
 // FRAGMENTS
 fragment E_NOTATION: [Ee] [+-]? [0-9]+;

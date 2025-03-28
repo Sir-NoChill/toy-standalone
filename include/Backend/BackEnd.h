@@ -41,7 +41,7 @@
 
 class BackEnd {
  public:
-    BackEnd(ast::Block*);
+    BackEnd(ast::Module*);
 
     void codegen() { };
     void dumpLLVM(std::ostream &os);
