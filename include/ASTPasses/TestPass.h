@@ -6,4 +6,4 @@ class TestPass : public ASTPass {
     TestPass(ast::Module* ast) : ASTPass(ast) {}
     virtual void traverse() override { visitModule(this->ast); }
 };
-}
+
