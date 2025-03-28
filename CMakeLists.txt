@@ -34,7 +34,13 @@ find_package(Threads REQUIRED)
 set(CMAKE_CXX_STANDARD 23)
 
 # Add CXX flags.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
+
+string(TOLOWER ${CMAKE_BUILD_TYPE} build_type)
+if (build_type STREQUAL debug)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -DDEBUG")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ffast-math")
+endif()
 
 # Include cmake utilities.
 include("${CMAKE_SOURCE_DIR}/cmake/symlink_to_bin.cmake")
