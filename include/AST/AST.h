@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <sys/types.h>
 #include <variant>
 #include <fstream>
 #include <vector>
@@ -63,6 +64,9 @@ class Param : public ASTNode {
 	std::optional<Shape*> shape, 
 	std::string name
     ) : ASTNode(line), shape(shape), name(name) {}
+    Param(Param& other) 
+      : ASTNode(other.line), shape(other.shape), name(other.name) {}
+
     void dump(std::ofstream& outfile, int level) override;
     std::string getName() { return name; }
     std::optional<Shape*> getShape() { return shape; }
@@ -88,6 +92,7 @@ class Decl : public ASTNode {
       : ASTNode(line), var(var), expr(expr) {}
     void dump(std::ofstream& outfile, int level) override;
     std::optional<expr_t> getExpr() { return expr; };
+    Param* getParam() { return var; }
 };
 
 class Block : public ASTNode {
@@ -115,6 +120,7 @@ class Function : public ASTNode {
     void dump(std::ofstream& outfile, int level) override;
 
     std::vector<Param*> getParam() { return parameters; }
+    std::string getName() { return prototype; }
     std::optional<Block*> getBlock() { return body; }
 };
 
@@ -149,6 +155,9 @@ class VarExpr : public Expr {
     ) : Expr(line, shape), name(name), vals(vals) {}
 
     void dump(std::ofstream& outfile, int level) override;
+    void setShape(Shape* sh) { this->shape = sh; }
+    void setLine(uint16_t l) { this->line = l; }
+    std::string getName() { return name; }
 };
 
 class CallExpr : public Expr {
@@ -162,6 +171,8 @@ class CallExpr : public Expr {
 
     void dump(std::ofstream& outfile, int level) override;
     std::vector<expr_t> getOperands() { return operands; }
+    std::string getName() { return func; }
+    void setLine(uint16_t line) { this->line = line; }
 };
 
 class Print : public CallExpr {

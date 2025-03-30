@@ -10,7 +10,7 @@
 namespace ast {
 
 void VarExpr::dump(std::ofstream& outfile, int level) {
-  std::print(outfile, "{}Var {}: ",std::string(level, ' '), this->name);
+  std::print(outfile, "{}Var {} @line {}: ",std::string(level, ' '), this->name, this->line);
   if (this->shape.has_value()) {
     this->shape.value()->dump(outfile, 0);
   } else {
@@ -33,9 +33,10 @@ void LiteralExpr::dump(std::ofstream& outfile, int level) {
 }
 
 void CallExpr::dump(std::ofstream& outfile, int level) {
-  std::print(outfile, "{}Call '{}' with args:\n",
+  std::print(outfile, "{}Call '{}' (def @ line {}) with args:\n",
       std::string(level, ' '),
-      this->func
+      this->func,
+      this->line
   );
   for (auto e : this->operands) 
     std::visit([&](auto& arg){arg->dump(outfile, level + 1);}, e);
