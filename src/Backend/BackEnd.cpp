@@ -9,7 +9,7 @@ BackEnd::BackEnd(ast::Module* ast) : loc(mlir::UnknownLoc::get(&context)) {
     context.loadDialect<mlir::scf::SCFDialect>();
     context.loadDialect<mlir::cf::ControlFlowDialect>();
     context.loadDialect<mlir::memref::MemRefDialect>(); 
-    // context.loadDialect<mlir::toy::ToyDialect>();
+    context.loadDialect<mlir::toy::ToyDialect>();
 
     // Initialize the MLIR context 
     builder = std::make_shared<mlir::OpBuilder>(&context);

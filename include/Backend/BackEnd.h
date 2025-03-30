@@ -35,6 +35,7 @@
 #include "mlir/Dialect/SCF/IR/SCF.h"
 #include "mlir/Dialect/ControlFlow/IR/ControlFlow.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
+#include "Toy/ToyOpsDialect.h.inc"
 
 // AST
 #include "AST/AST.h"

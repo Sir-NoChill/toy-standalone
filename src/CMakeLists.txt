@@ -13,6 +13,7 @@ set(
   "${AST}/ASTBuilder.cpp"
   "${AST}/ASTVisitor.cpp"
   "${AST}/AST.cpp"
+  "${AST_PASSES}/Rewrite.cpp"
 )
 
 set(
