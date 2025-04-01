@@ -1,7 +1,6 @@
-add_mlir_dialect(ToyOps toy)
-add_mlir_doc(ToyDialect ToyDialect Toy/ -gen-dialect-doc)
-add_mlir_doc(ToyOps ToyOps Toy/ -gen-op-doc)
-
-set(LLVM_TARGET_DEFINITIONS ToyPasses.td)
-mlir_tablegen(ToyPasses.h.inc --gen-pass-decls)
-add_public_tablegen_target(MLIRToyPassesIncGen)
+set(LLVM_TARGET_DEFINITIONS Ops.td)
+mlir_tablegen(Ops.h.inc -gen-op-decls)
+mlir_tablegen(Ops.cpp.inc -gen-op-defs)
+mlir_tablegen(Dialect.h.inc -gen-dialect-decls)
+mlir_tablegen(Dialect.cpp.inc -gen-dialect-defs)
+add_public_tablegen_target(ToyOpsIncGen)
