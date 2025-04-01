@@ -46,8 +46,9 @@ int main(int argc, char **argv) {
 
     // Generate the code
     BackEnd backend = BackEnd(ast_builder.get_ast());
-    backend.codegen();
-    backend.dumpLLVM(outfile);
+    backend.traverse();
+    backend.dumpMLIR();
+
   } catch (CompileTimeException const& e) {
     std::cerr << e.what() << std::endl;
     return 1;
