@@ -148,7 +148,7 @@ std::any ASTBuilder::visitReturnStat(ToyParser::ReturnStatContext *ctx) {
 }
 
 std::any ASTBuilder::visitShape(ToyParser::ShapeContext *ctx) {
-  std::vector<uint16_t> dims;
+  std::vector<int64_t> dims;
   for (auto i : ctx->INT()) {
     dims.emplace_back(std::stoi(i->getText()));
   }
@@ -212,7 +212,7 @@ std::any ASTBuilder::visitLiteral(ToyParser::LiteralContext *ctx) {
     vals.emplace_back(v);
   }
 
-  std::vector<uint16_t> shvec;
+  std::vector<int64_t> shvec;
   shvec.emplace_back(vals.size());
   auto shape = new ast::Shape(getLoc(ctx), shvec);
 

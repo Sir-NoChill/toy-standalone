@@ -50,9 +50,9 @@ class ASTNode {
 
 class Shape : public ASTNode {
   private:
-    std::vector<uint16_t> shape;
+    std::vector<int64_t> shape;
   public:
-    Shape(Location line, std::vector<uint16_t> shape)
+    Shape(Location line, std::vector<int64_t> shape)
       : ASTNode(line), shape(shape) {}
     Shape(Shape& other, uint16_t current=0) // badness (insert begin is O(n), shouldn't matter)
       : ASTNode(other.location) 
@@ -60,7 +60,7 @@ class Shape : public ASTNode {
 
     void dump(std::ofstream& outfile, int level) override { }
     uint16_t num_values();
-    std::vector<uint16_t> get_dims() { return shape; };
+    std::vector<int64_t> get_dims() { return shape; };
     std::string repr();
 };
 

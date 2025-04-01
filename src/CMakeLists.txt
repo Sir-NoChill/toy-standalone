@@ -6,6 +6,7 @@ set(TOY "${CMAKE_CURRENT_SOURCE_DIR}/Toy")
 set(
   TOY_BACKEND_FILES
     "${BACKEND}/BackEnd.cpp"
+    "${BACKEND}/BackEndPass.cpp"
 )
 
 set(
