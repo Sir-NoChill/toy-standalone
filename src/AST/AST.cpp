@@ -10,7 +10,7 @@
 namespace ast {
 
 void VarExpr::dump(std::ofstream& outfile, int level) {
-  std::print(outfile, "{}Var {} @line {}: ",std::string(level, ' '), this->name, this->line);
+  std::print(outfile, "{}Var {} @location {}: ",std::string(level, ' '), this->name, this->location.repr());
   if (this->shape.has_value()) {
     this->shape.value()->dump(outfile, 0);
   } else {
@@ -33,10 +33,10 @@ void LiteralExpr::dump(std::ofstream& outfile, int level) {
 }
 
 void CallExpr::dump(std::ofstream& outfile, int level) {
-  std::print(outfile, "{}Call '{}' (def @ line {}) with args:\n",
+  std::print(outfile, "{}Call '{}' (def @ location {}) with args:\n",
       std::string(level, ' '),
       this->func,
-      this->line
+      this->location.repr()
   );
   for (auto e : this->operands) 
     std::visit([&](auto& arg){arg->dump(outfile, level + 1);}, e);
@@ -85,7 +85,7 @@ std::string LiteralExpr::repr() {
 void Function::dump(std::ofstream& outfile, int level) {
   auto spaces = std::string(level, ' ');
 
-  std::print(outfile, "{}Function '{}' @line {} (", spaces, prototype, line);
+  std::print(outfile, "{}Function '{}' @location {} (", spaces, prototype, location.repr());
   int i = 0;
   for (auto param : this->parameters) {
     // coopting the level as the param index
@@ -109,8 +109,8 @@ void Param::dump(std::ofstream& outfile, int index) {
 
 
 void Print::dump(std::ofstream& outfile, int index) {
-  std::print(outfile, "{}Print @line {}: {}\n", 
-      std::string(index, ' '), this->line, "None");
+  std::print(outfile, "{}Print @location {}: {}\n", 
+      std::string(index, ' '), this->location.repr(), "None");
 }
 
 void Block::dump(std::ofstream& outfile, int index) {
@@ -121,18 +121,18 @@ void Block::dump(std::ofstream& outfile, int index) {
 }
 
 void Decl::dump(std::ofstream& outfile, int level) {
-  std::print(outfile, "{}Decl {} {} @line {}:\n", 
+  std::print(outfile, "{}Decl {} {} @location {}:\n", 
       std::string(level, ' '),
       this->var->getName(),
       this->var->getShape().has_value() ? this->var->getShape().value()->repr() : "<Undef>",
-      this->line
+      this->location.repr()
   );
   if (this->expr.has_value())
     std::visit([&](auto& arg){arg->dump(outfile, level + 1);}, this->expr.value());
 }
 
 void Return::dump(std::ofstream& outfile, int level) {
-  std::print(outfile, "{}Return @line {}: \n", std::string(level, ' '), this->line);
+  std::print(outfile, "{}Return @location {}: \n", std::string(level, ' '), this->location.repr());
   if (this->expr.has_value())
     std::visit([&](auto& arg){arg->dump(outfile, level + 1);}, this->expr.value());
 }
@@ -153,7 +153,7 @@ std::string opToString(Operation op) {
     case Div: return "/";
     case MatMul: return "**";
   }
-  throw LiteralError(0, "Invalid operation found");
+  throw LiteralError(builtinloc, "Invalid operation found");
 }
 
 uint16_t Shape::num_values() {
@@ -195,6 +195,6 @@ size_t LiteralExpr::size() {
     return val->size();
   }
 
-  throw TypeError(0, "Failed to extract literal size (internal error)");
+  throw TypeError(builtinloc, "Failed to extract literal size (internal error)");
 }
 }

@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <sys/types.h>
 #include <variant>
@@ -10,6 +11,16 @@
 #include <vector>
 
 namespace ast {
+
+struct Location {
+  std::shared_ptr<std::string> filename;
+  size_t line;
+  size_t col;
+
+  std::string repr() { return *filename + ":" + std::to_string(line) + "," + std::to_string(col); }
+};
+
+const Location builtinloc = Location(std::make_shared<std::string>(""), 0, 0);
 
 class BinExpr;
 class CallExpr;
@@ -24,28 +35,27 @@ typedef std::variant<Decl*, Return*, Print*> stat_t;
 
 class ASTNode {
   protected:
-    uint16_t line;
+    Location location;
 
-    ASTNode() : line(0) {}
-    ASTNode(uint16_t line) : line(line) {}
+    ASTNode() : location(Location(nullptr, 0, 0)) {}
+    ASTNode(Location location) : location(location) {}
 
     virtual void dump(std::ofstream& outfile, int level) = 0;
 
-    std::size_t loc();
     ~ASTNode(){};
 
   public:
-    uint16_t getLine() { return line; }
+    Location getLine() { return location; }
 };
 
 class Shape : public ASTNode {
   private:
     std::vector<uint16_t> shape;
   public:
-    Shape(uint16_t line, std::vector<uint16_t> shape)
+    Shape(Location line, std::vector<uint16_t> shape)
       : ASTNode(line), shape(shape) {}
     Shape(Shape& other, uint16_t current=0) // badness (insert begin is O(n), shouldn't matter)
-      : ASTNode(other.line) 
+      : ASTNode(other.location) 
     { this->shape = other.shape; this->shape.insert(this->shape.begin(), current); } 
 
     void dump(std::ofstream& outfile, int level) override { }
@@ -60,12 +70,12 @@ class Param : public ASTNode {
     std::string name;
   public:
     Param(
-	uint16_t line,
+	Location line,
 	std::optional<Shape*> shape, 
 	std::string name
     ) : ASTNode(line), shape(shape), name(name) {}
     Param(Param& other) 
-      : ASTNode(other.line), shape(other.shape), name(other.name) {}
+      : ASTNode(other.location), shape(other.shape), name(other.name) {}
 
     void dump(std::ofstream& outfile, int level) override;
     std::string getName() { return name; }
@@ -76,7 +86,7 @@ class Return : public ASTNode {
   private:
     std::optional<expr_t> expr;
   public:
-    Return(uint16_t line, std::optional<expr_t> exp)
+    Return(Location line, std::optional<expr_t> exp)
       : ASTNode(line), expr(exp) {}
     void dump(std::ofstream& outfile, int level) override;
     std::optional<expr_t> getExpr() { return expr; };
@@ -88,7 +98,7 @@ class Decl : public ASTNode {
     std::optional<expr_t> expr;
     
   public:
-    Decl(uint16_t line, Param* var, std::optional<expr_t> expr)
+    Decl(Location line, Param* var, std::optional<expr_t> expr)
       : ASTNode(line), var(var), expr(expr) {}
     void dump(std::ofstream& outfile, int level) override;
     std::optional<expr_t> getExpr() { return expr; };
@@ -99,7 +109,7 @@ class Block : public ASTNode {
   private:
     std::vector<stat_t> statements;
   public:
-    Block(uint16_t line, std::vector<stat_t> statements)
+    Block(Location line, std::vector<stat_t> statements)
       : ASTNode(line), statements(statements) {}
     void dump(std::ofstream& outfile, int level) override;
     std::vector<stat_t> getStatements() { return statements; }
@@ -113,7 +123,7 @@ class Function : public ASTNode {
   public:
     Function(
 	std::string proto, 
-	uint64_t line, 
+	Location line, 
 	std::optional<Block*> b, 
 	std::vector<Param*> parm
     ) : ASTNode(line), prototype(proto), body(b), parameters(parm) {}
@@ -137,7 +147,7 @@ class Expr : public ASTNode {
   protected:
     std::optional<Shape*> shape;
   public:
-    Expr(uint16_t line, std::optional<Shape*> shape)
+    Expr(Location line, std::optional<Shape*> shape)
       : ASTNode(line), shape(shape) {}
     void dump(std::ofstream& outfile, int level) override = 0;
 };
@@ -148,7 +158,7 @@ class VarExpr : public Expr {
     std::optional<std::vector<double>> vals;
   public:
     VarExpr(
-	uint16_t line, 
+	Location line, 
 	std::string name,
 	std::optional<Shape*> shape,
 	std::optional<std::vector<double>> vals
@@ -156,7 +166,7 @@ class VarExpr : public Expr {
 
     void dump(std::ofstream& outfile, int level) override;
     void setShape(Shape* sh) { this->shape = sh; }
-    void setLine(uint16_t l) { this->line = l; }
+    void setLine(Location l) { this->location = l; }
     std::string getName() { return name; }
 };
 
@@ -166,18 +176,18 @@ class CallExpr : public Expr {
   protected:
     std::vector<expr_t> operands;
   public:
-    CallExpr(uint16_t line, std::string name, std::vector<expr_t> operands)
+    CallExpr(Location line, std::string name, std::vector<expr_t> operands)
       : Expr(line, std::nullopt), func(name), operands(operands) {}
 
     void dump(std::ofstream& outfile, int level) override;
     std::vector<expr_t> getOperands() { return operands; }
     std::string getName() { return func; }
-    void setLine(uint16_t line) { this->line = line; }
+    void setLine(Location line) { this->location = line; }
 };
 
 class Print : public CallExpr {
   public:
-    Print(uint16_t line, std::optional<expr_t> expr) 
+    Print(Location line, std::optional<expr_t> expr) 
       : CallExpr(line, "print", std::vector<expr_t>()) {if (expr.has_value()) operands.emplace_back(expr.value());}
     void dump(std::ofstream& outfile, int level) override;
 };
@@ -198,7 +208,7 @@ class BinExpr : public Expr {
     expr_t rhs;
   public:
     BinExpr(
-	uint16_t line,
+	Location line,
 	std::optional<Shape*> shape, 
 	Operation op, 
 	expr_t lhs, 
@@ -217,7 +227,7 @@ class LiteralExpr : public Expr {
     tensor_t values;
   public:
     LiteralExpr(
-      uint16_t line,
+      Location line,
       std::optional<Shape*> shape,
       tensor_t values
     ) : Expr(line, shape), values(values) {}

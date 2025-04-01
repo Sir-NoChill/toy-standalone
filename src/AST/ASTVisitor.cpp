@@ -1,4 +1,5 @@
 #include "AST/ASTVisitor.h"
+#include "AST/AST.h"
 #include "macros.h"
 #include "CompileTimeExceptions.h"
 #include <memory>
@@ -31,7 +32,7 @@ void ASTPass::visitExpr(ast::expr_t stat) {
   else if (std::holds_alternative<ast::CallExpr*>(stat)) visitCallExpr(std::get<ast::CallExpr*>(stat));
   else if (std::holds_alternative<ast::VarExpr*>(stat)) visitVarExpr(std::get<ast::VarExpr*>(stat));
   else if (std::holds_alternative<ast::LiteralExpr*>(stat)) visitLiteralExpr(std::get<ast::LiteralExpr*>(stat));
-  else throw StatementError(0, "Invalid expression found");
+  else throw StatementError(ast::builtinloc, "Invalid expression found");
 }
 
 void ASTPass::visitReturn(ast::Return* ret) {

@@ -5,6 +5,8 @@
 #include <ostream>
 #include <sstream>
 
+#include "AST/AST.h"
+
 class CompileTimeException : public std::exception {
 protected:
     std::string msg;
@@ -18,9 +20,9 @@ public:
 #define DEF_COMPILE_TIME_EXCEPTION(NAME)                                         \
 class NAME : public CompileTimeException {                                       \
 public:                                                                          \
-    NAME(unsigned line, const std::string &description) {                        \
+    NAME(ast::Location line, const std::string &description) {                        \
         std::stringstream buf;                                                   \
-        buf << #NAME << " on Line " << line << ": " << description << std::endl; \
+        buf << #NAME << " on Line " << line.repr() << ": " << description << std::endl; \
         msg = buf.str();                                                         \
     }                                                                            \
 }

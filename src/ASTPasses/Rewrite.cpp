@@ -31,7 +31,7 @@ void Rewrite::visitVarExpr(ast::VarExpr* var) {
 
 void Rewrite::visitCallExpr(ast::CallExpr* call) {
   if (call->getName() == "print" || call->getName() == "transpose")
-    call->setLine(0);
+    call->setLine(ast::builtinloc);
   for (auto func : this->ast->getFunctions()) {
     if (func->getName() == call->getName()) {
       call->setLine(func->getLine());
